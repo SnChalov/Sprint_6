@@ -1,31 +1,29 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
+from pages.base_page import BasePage
 
-class OrderPage:
-
+class OrderPage(BasePage):
 
     NAME_INPUT = (
         By.CSS_SELECTOR,
         "input[placeholder='* Имя']"
     )
-
+    
     SURNAME_INPUT = (
         By.CSS_SELECTOR,
         "input[placeholder='* Фамилия']"
     )
-
+    
     ADDRESS_INPUT = (
         By.CSS_SELECTOR,
         "input[placeholder='* Адрес: куда привезти заказ']"
     )
-
+    
     METRO_INPUT = (
         By.CSS_SELECTOR,
         "input[placeholder='* Станция метро']"
     )
-
+    
     PHONE_INPUT = (
         By.CSS_SELECTOR,
         "input[placeholder='* Телефон: на него позвонит курьер']"
@@ -35,17 +33,17 @@ class OrderPage:
         By.XPATH,
         "//button[text()='Далее']"
     )
-
+    
     DELIVERY_DATE_INPUT = (
         By.CSS_SELECTOR,
         "input[placeholder='* Когда привезти самокат']"
     )
-
+    
     RENTAL_PERIOD = (
         By.CSS_SELECTOR,
         ".Dropdown-control"
     )
-
+    
     BLACK_SCOOTER = (
         By.ID,
         "black"
@@ -55,17 +53,17 @@ class OrderPage:
         By.ID,
         "grey"
     )
-
+    
     COMMENT_INPUT = (
         By.CSS_SELECTOR,
         "input[placeholder='Комментарий для курьера']"
     )
-
+    
     BACK_BUTTON = (
         By.XPATH,
         "//button[text()='Назад']"
     )
-
+    
     TOP_ORDER_BUTTON = (
         By.XPATH,
         "//button[contains(@class, 'Button_Button__ra12g') "
@@ -79,94 +77,65 @@ class OrderPage:
         "and contains(@class, 'Button_Middle__1CSJM') "
         "and text()='Заказать']"
     )
-
+    
     CONFIRM_BUTTON = (
         By.XPATH,
         "//button[text()='Да']"
     )
-
+    
     ORDER_STATUS_BUTTON = (
         By.XPATH,
         "//button[text()='Посмотреть статус']"
     )
-
-    def __init__(self, driver):
-        self.driver = driver
-
-
+    
     def enter_name(self, name):
-        WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located(self.NAME_INPUT)
-        ).send_keys(name)
+        self.enter_text(self.NAME_INPUT, name)
 
     def enter_surname(self, surname):
-        WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located(self.SURNAME_INPUT)
-        ).send_keys(surname)
-
+        self.enter_text(self.SURNAME_INPUT, surname)
+    
     def enter_address(self, address):
-        WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located(self.ADDRESS_INPUT)
-        ).send_keys(address)
-
+        self.enter_text(self.ADDRESS_INPUT, address)
+    
     def enter_metro(self, metro):
-        metro_input = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable(self.METRO_INPUT)
-        )
-
+        metro_input = self.find_element(self.METRO_INPUT)
+    
         metro_input.click()
         metro_input.send_keys(metro)
-
+    
         metro_option = (
             By.XPATH,
             f"//button[contains(@class, 'select-search__option') "
             f"and .//div[normalize-space()='{metro}']]"
         )
-
-        WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable(metro_option)
-        ).click()
-
+    
+        self.click_element(metro_option)
+    
     def enter_phone(self, phone):
-        WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located(self.PHONE_INPUT)
-        ).send_keys(phone)
-
+        self.enter_text(self.PHONE_INPUT, phone)
+    
     def click_next(self):
-        WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable(self.NEXT_BUTTON)
-        ).click()
-
+        self.click_element(self.NEXT_BUTTON)
+    
     def click_top_order_button(self):
-        WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable(self.TOP_ORDER_BUTTON)
-        ).click()
-
+        self.click_element(self.TOP_ORDER_BUTTON)
+    
     def enter_delivery_date(self, date):
-        date_input = WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located(self.DELIVERY_DATE_INPUT)
-        )
-
-        date_input.send_keys(date)
-
+        self.enter_text(self.DELIVERY_DATE_INPUT, date)
         self.click_top_order_button()
-
+    
     def select_rental_period(self, period):
-        WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable(self.RENTAL_PERIOD)
-        ).click()
-
+        self.click_element(self.RENTAL_PERIOD)
+    
         rental_option = (
             By.XPATH,
             f"//div[@class='Dropdown-option' "
             f"and @role='option' "
             f"and normalize-space()='{period}']"
         )
-
-        WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable(rental_option)
-        ).click()
-
+    
+        self.click_element(rental_option)
+    
     def select_scooter_color(self, color):
         if color == "чёрный жемчуг":
             locator = self.BLACK_SCOOTER
@@ -174,34 +143,22 @@ class OrderPage:
             locator = self.GREY_SCOOTER
         else:
             raise ValueError(f"Неизвестный цвет самоката: {color}")
-
-        WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable(locator)
-        ).click()
+    
+        self.click_element(locator)
 
     def enter_comment(self, comment):
-        WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located(self.COMMENT_INPUT)
-        ).send_keys(comment)
-
-    def click_back(self):
-        WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable(self.BACK_BUTTON)
-        ).click()
-
-    def click_order(self):
-        WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable(self.BOTTOM_ORDER_BUTTON)
-        ).click()
-
-    def confirm_order(self):
-        WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable(self.CONFIRM_BUTTON)
-        ).click()
+        self.enter_text(self.COMMENT_INPUT, comment)
     
+    def click_back(self):
+        self.click_element(self.BACK_BUTTON)
+    
+    def click_order(self):
+        self.click_element(self.BOTTOM_ORDER_BUTTON)
+    
+    def confirm_order(self):
+        self.click_element(self.CONFIRM_BUTTON)
     
     def is_order_successful(self):
-        return WebDriverWait(self.driver, 10).until(
-            EC.visibility_of_element_located(self.ORDER_STATUS_BUTTON)
+        return self.find_element(
+            self.ORDER_STATUS_BUTTON
         ).is_displayed()
-    
