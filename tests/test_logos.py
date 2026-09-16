@@ -1,46 +1,30 @@
-from selenium.webdriver.support.ui import WebDriverWait
+import allure
 from pages.main_page import MainPage
 
 
-def test_scooter_logo_returns_to_main_page(driver):
-    main_page = MainPage(driver)
+class TestLogos:
 
-    main_page.click_order_button(0)
+    @allure.title("Проверка возврата на главную страницу по логотипу Самоката")
+    def test_scooter_logo_returns_to_main_page(self, driver):
+        main_page = MainPage(driver)
 
-    WebDriverWait(driver, 10).until(
-        lambda driver: "/order" in driver.current_url
-    )
+        main_page.click_order_button(0)
+        main_page.wait_for_url("/order")
 
-    assert "/order" in driver.current_url
+        main_page.click_scooter_logo()
+        main_page.wait_for_url("qa-scooter.praktikum-services.ru/")
 
-    main_page.click_scooter_logo()
+        assert (
+            main_page.get_current_url()
+            == "https://qa-scooter.praktikum-services.ru/"
+        )
 
-    WebDriverWait(driver, 10).until(
-        lambda driver: driver.current_url
-        == "https://qa-scooter.praktikum-services.ru/"
-    )
+    @allure.title("Проверка перехода на Дзен по логотипу Яндекса")
+    def test_yandex_logo_opens_dzen(self, driver):
+        main_page = MainPage(driver)
 
-    assert driver.current_url == "https://qa-scooter.praktikum-services.ru/"
+        main_page.click_yandex_logo()
+        main_page.switch_to_new_window()
+        main_page.wait_for_url("dzen.ru")
 
-
-def test_yandex_logo_opens_dzen(driver):
-    main_page = MainPage(driver)
-
-    original_window = driver.current_window_handle
-
-    main_page.click_yandex_logo()
-
-    WebDriverWait(driver, 10).until(
-        lambda driver: len(driver.window_handles) > 1
-    )
-
-    for window in driver.window_handles:
-        if window != original_window:
-            driver.switch_to.window(window)
-            break
-
-    WebDriverWait(driver, 10).until(
-        lambda driver: "dzen.ru" in driver.current_url
-    )
-
-    assert "dzen.ru" in driver.current_url
+        assert "dzen.ru" in main_page.get_current_url()

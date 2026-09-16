@@ -1,7 +1,8 @@
-from selenium.webdriver.common.by import By
+import allure
 import time
-
+from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
+
 
 class MainPage(BasePage):
 
@@ -12,34 +13,30 @@ class MainPage(BasePage):
         By.ID,
         "rcc-confirm-button"
     )
-    
+
+    @allure.step("Закрыть уведомление о cookies")
     def close_cookie_notification(self):
         self.click_element(self.COOKIE_BUTTON)
-    
-    def click_order_button(self, number):
-        buttons = self.driver.find_elements(*self.ORDER_BUTTONS)
-        buttons[number].click()
-    
+
+    @allure.step("Получить локатор вопроса FAQ №{number}")
     def get_faq_question(self, number):
         return (
             By.ID,
             f"accordion__heading-{number}"
         )
 
+    @allure.step("Открыть вопрос FAQ №{number}")
     def click_faq_question(self, number):
         question = self.get_faq_question(number)
-    
+
         self.find_element(question)
-    
-        self.driver.execute_script(
-            "arguments[0].scrollIntoView();",
-            self.find_element(question)
-        )
-    
+        self.scroll_to_element(question)
+
         time.sleep(1)
-    
+
         self.click_element(question)
-    
+
+    @allure.step("Получить ответ FAQ №{number}")
     def get_faq_answer(self, number):
         answer = self.find_element(
             (
@@ -47,12 +44,18 @@ class MainPage(BasePage):
                 f"accordion__panel-{number}"
             )
         )
-    
+
         return answer.text
 
+    @allure.step("Нажать на логотип Самоката")
     def click_scooter_logo(self):
         self.click_element(self.SCOOTER_LOGO)
-    
+
+    @allure.step("Нажать на логотип Яндекса")
     def click_yandex_logo(self):
         self.click_element(self.YANDEX_LOGO)
-    
+
+    @allure.step("Нажать на кнопку 'Заказать' №{number}")
+    def click_order_button(self, number):
+        self.click_element_from_list(self.ORDER_BUTTONS, number)
+        
