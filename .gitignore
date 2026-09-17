@@ -4,4 +4,3 @@ __pycache__/
 .idea/
 .pytest_cache/
 allure-results/
-allure-report/
